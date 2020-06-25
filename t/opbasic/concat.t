@@ -43,12 +43,15 @@ my ($a, $b, $c) = qw(foo bar);
 
 ok("$a"     eq "foo",    "verifying assign");
 ok("$a$b"   eq "foobar", "basic concatenation");
+{
+no warnings qw(uninitialized);
 ok("$c$a$c" eq "foo",    "concatenate undef, fore and aft");
+}
 
 # Okay, so that wasn't very challenging.  Let's go Unicode.
 
 {
-    # bug id 20000819.004 (#3761) 
+    # bug id 20000819.004 (#3761)
     my $dx;
     $_ = $dx = "\x{10f2}";
     s/($dx)/$dx$1/;
@@ -77,12 +80,16 @@ ok("$c$a$c" eq "foo",    "concatenate undef, fore and aft");
     my $a;
     $a .= "\x{1ff}";
     ok($a eq  "\x{1ff}", "bug id 20000901.092 (#4184), undef left");
-    $a .= undef;
-    ok($a eq  "\x{1ff}", "bug id 20000901.092 (#4184), undef right");
+    {
+        no warnings qw(uninitialized);
+        $a .= undef;
+        ok($a eq  "\x{1ff}", "bug id 20000901.092 (#4184), undef right");
+    }
 }
 
 {
     # ID 20001020.006 (#4484)
+    no warnings qw(void uninitialized);
 
     "x" =~ /(.)/; # unset $2
 
@@ -96,6 +103,7 @@ ok("$c$a$c" eq "foo",    "concatenate undef, fore and aft");
     ok(!$@, "bug id 20001020.006 (#4484), right");
 
     my $pi;
+    no warnings qw(once);
     *pi = \undef;
     # This bug existed earlier than the $2 bug, but is fixed with the same
     # patch. Without the fix this 5.7.0 would also croak:
@@ -126,6 +134,7 @@ sub beq { use bytes; $_[0] eq $_[1]; }
 }
 
 {
+    no warnings qw(void);
     my $a; ($a .= 5) . 6;
     ok($a == 5, '($a .= 5) . 6 - present since 5.000');
 }
@@ -761,8 +770,9 @@ ok(ref(CORE::state $y = "a $o b") eq 'o',
     $s->($h{foo});
     is($h{foo}, "ab", "PVLV");
 
-    # assigning a string to a typeglob creates an alias    
+    # assigning a string to a typeglob creates an alias
     no strict;
+    no warnings qw(void once);
     $Foo = 'myfoo';
     *Bar = ("F" . $o . $o);
     is($Bar, "myfoo", '*Bar = "Foo"');
@@ -782,6 +792,7 @@ ok(ref(CORE::state $y = "a $o b") eq 'o',
 
 {
     my $foo = "foo";
+    no warnings qw(void uninitialized);
     my $a . $foo; # weird but legal
     is($a, '', 'my $a . $foo');
     my $b; $b .= $foo;
