@@ -44,23 +44,3 @@ diff --git a/sv.c b/sv.c
      U32 arena_size;                 /* Size of arena to allocate */
  };
  
-@@ -3065,8 +3065,8 @@
-  
- 		return RX_WRAPPED(re);
- 	    } else {
--		const char *const typestr = sv_reftype(referent, 0);
--		const STRLEN typelen = strlen(typestr);
-+		const char *const typestring = sv_reftype(referent, 0);
-+		const STRLEN typelen = strlen(typestring);
- 		UV addr = PTR2UV(referent);
- 		const char *stashname = NULL;
- 		STRLEN stashnamelen = 0; /* hush, gcc */
-@@ -3109,7 +3109,7 @@
- 		*--retval = '(';
- 
- 		retval -= typelen;
--		memcpy(retval, typestr, typelen);
-+		memcpy(retval, typestring, typelen);
- 
- 		if (stashname) {
- 		    *--retval = '=';
