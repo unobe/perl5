@@ -1262,14 +1262,20 @@ PP(pp_eq)
 {
     dSP;
     SV *left, *right;
+    U32 flags_and, flags_or;
 
     tryAMAGICbin_MG(eq_amg, AMGf_numeric);
     right = POPs;
     left  = TOPs;
+    flags_and = SvFLAGS(left) & SvFLAGS(right);
+    flags_or  = SvFLAGS(left) | SvFLAGS(right);
+
     SETs(boolSV(
-	(SvIOK_notUV(left) && SvIOK_notUV(right))
-	? (SvIVX(left) == SvIVX(right))
-	: ( do_ncmp(left, right) == 0)
+        ( (flags_and & SVf_IOK) && ((flags_or & SVf_IVisUV) ==0 ) )
+        ?    (SvIVX(left) == SvIVX(right))
+        : (flags_and & SVf_NOK)
+        ?    (SvNVX(left) == SvNVX(right))
+        : ( do_ncmp(left, right) == 0)
     ));
     RETURN;
 }
@@ -2072,7 +2078,6 @@ S_aassign_copy_common(pTHX_ SV **firstlelem, SV **lastlelem,
 #endif
 )
 {
-    dVAR;
     SV **relem;
     SV **lelem;
     SSize_t lcount = lastlelem - firstlelem + 1;
@@ -2200,7 +2205,7 @@ S_aassign_copy_common(pTHX_ SV **firstlelem, SV **lastlelem,
 
 PP(pp_aassign)
 {
-    dVAR; dSP;
+    dSP;
     SV **lastlelem = PL_stack_sp;
     SV **lastrelem = PL_stack_base + POPMARK;
     SV **firstrelem = PL_stack_base + POPMARK + 1;
@@ -4659,7 +4664,6 @@ PP(pp_grepwhile)
 void
 Perl_leave_adjust_stacks(pTHX_ SV **from_sp, SV **to_sp, U8 gimme, int pass)
 {
-    dVAR;
     dSP;
     SSize_t tmps_base; /* lowest index into tmps stack that needs freeing now */
     SSize_t nargs;

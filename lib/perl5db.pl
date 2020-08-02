@@ -529,7 +529,7 @@ BEGIN {
 use vars qw($VERSION $header);
 
 # bump to X.XX in blead, only use X.XX_XX in maint
-$VERSION = '1.57';
+$VERSION = '1.58';
 
 $header = "perl5db.pl version $VERSION";
 
@@ -643,6 +643,7 @@ use vars qw(
     $filename
     $histfile
     $histsize
+    $histitemminlength
     $IN
     $inhibit_exit
     @ini_INC
@@ -938,6 +939,7 @@ are to be accepted.
 
 @options = qw(
   CommandSet   HistFile      HistSize
+  HistItemMinLength
   hashDepth    arrayDepth    dumpDepth
   DumpDBFiles  DumpPackages  DumpReused
   compactDump  veryCompact   quote
@@ -986,6 +988,7 @@ use vars qw(%optionVars);
     windowSize    => \$window,
     HistFile      => \$histfile,
     HistSize      => \$histsize,
+    HistItemMinLength => \$histitemminlength
 );
 
 =pod
@@ -2708,6 +2711,7 @@ If there are any preprompt actions, execute those as well.
         # The &-call is here to ascertain the mutability of @_.
         &DB::eval;
     }
+    undef $action;
 
     # Are we nested another level (e.g., did we evaluate a function
     # that had a breakpoint in it at the debugger prompt)?
@@ -2820,7 +2824,7 @@ it up.
                 $cmd = $laststep;
             }
             chomp($cmd);    # get rid of the annoying extra newline
-            if (length($cmd) >= 2) {
+            if (length($cmd) >= option_val('HistItemMinLength', 2)) {
                 push( @hist, $cmd );
             }
             push( @truehist, $cmd );
@@ -3346,10 +3350,6 @@ use B<o> I<inhibit_exit> to avoid stopping after program termination,
 B<h q>, B<h R> or B<h o> to get additional info.
 EOP
 
-        # Set the DB::eval context appropriately.
-        # At program termination disable any user actions.
-        $DB::action = undef;
-
         $DB::package     = 'main';
         $DB::usercontext = DB::_calc_usercontext($DB::package);
     } ## end elsif ($package eq 'DB::fake')
@@ -3734,10 +3734,7 @@ sub _handle_H_command {
         my $i;
 
         for ( $i = $#hist ; $i > $end ; $i-- ) {
-
-            # Print the command  unless it has no arguments.
-            print $OUT "$i: ", $hist[$i], "\n"
-            unless $hist[$i] =~ /^.?$/;
+            print $OUT "$i: ", $hist[$i], "\n";
         }
 
         next CMD;
@@ -7330,7 +7327,7 @@ sub readline {
 
         # Add it to the terminal history (if possible).
         $term->AddHistory($got)
-          if length($got) > 1
+          if length($got) >= option_val("HistItemMinLength", 2)
           and defined $term->Features->{addHistory};
         return $got;
     } ## end if (@typeahead)

@@ -485,6 +485,14 @@ use File::Glob qw(:case);
         ],
     },
 
+	'ExtUtils::PL2Bat' => {
+		'DISTRIBUTION' => 'LEONT/ExtUtils-PL2Bat-0.002.tar.gz',
+		'FILES'        => q[cpan/ExtUtils-PL2Bat],
+		'EXCLUDED'     => [
+			't/00-compile.t',
+		],
+	},
+
     'ExtUtils::Manifest' => {
         'DISTRIBUTION' => 'ETHER/ExtUtils-Manifest-1.72.tar.gz',
         'FILES'        => q[cpan/ExtUtils-Manifest],
@@ -505,7 +513,7 @@ use File::Glob qw(:case);
     },
 
     'File::Path' => {
-        'DISTRIBUTION' => 'JKEENAN/File-Path-2.16.tar.gz',
+        'DISTRIBUTION' => 'JKEENAN/File-Path-2.17.tar.gz',
         'FILES'        => q[cpan/File-Path],
         'EXCLUDED'     => [
             qw(t/Path-Class.t),
@@ -660,7 +668,7 @@ use File::Glob qw(:case);
     },
 
     'IPC::SysV' => {
-        'DISTRIBUTION' => 'MHX/IPC-SysV-2.07.tar.gz',
+        'DISTRIBUTION' => 'MHX/IPC-SysV-2.08.tar.gz',
         'FILES'        => q[cpan/IPC-SysV],
         'EXCLUDED'     => [
             qw( const-c.inc
@@ -670,7 +678,7 @@ use File::Glob qw(:case);
     },
 
     'JSON::PP' => {
-        'DISTRIBUTION' => 'ISHIGAKI/JSON-PP-4.04.tar.gz',
+        'DISTRIBUTION' => 'ISHIGAKI/JSON-PP-4.05.tar.gz',
         'FILES'        => q[cpan/JSON-PP],
     },
 
@@ -831,13 +839,22 @@ use File::Glob qw(:case);
     },
 
     'Net::Ping' => {
-        'DISTRIBUTION' => 'RURBAN/Net-Ping-2.72.tar.gz',
+        'DISTRIBUTION' => 'RURBAN/Net-Ping-2.73.tar.gz',
         'FILES'        => q[dist/Net-Ping],
         'EXCLUDED'     => [
             qw(README.md.PL),
             qw(t/020_external.t),
             qw(t/600_pod.t),
             qw(t/601_pod-coverage.t),
+        ],
+        'CUSTOMIZED' => [
+            qw{
+                t/000_load.t
+                t/001_new.t
+                t/010_pingecho.t
+                t/500_ping_icmp.t
+                t/501_ping_icmpv6.t
+            }
         ],
     },
 
@@ -976,7 +993,7 @@ use File::Glob qw(:case);
     },
 
     'Socket' => {
-        'DISTRIBUTION' => 'PEVANS/Socket-2.029.tar.gz',
+        'DISTRIBUTION' => 'PEVANS/Socket-2.030.tar.gz',
         'FILES'        => q[cpan/Socket],
     },
 

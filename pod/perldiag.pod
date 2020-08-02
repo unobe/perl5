@@ -2235,8 +2235,8 @@ variable and glob that.
 
 =item exec? I'm not *that* kind of operating system
 
-(F) The C<exec> function is not implemented on some systems, e.g., Symbian
-OS.  See L<perlport>.
+(F) The C<exec> function is not implemented on some systems, e.g.
+Catamount. See L<perlport>.
 
 =item %sExecution of %s aborted due to compilation errors.
 
@@ -5301,6 +5301,11 @@ a dirhandle.  Check your control flow.
 
 (W closed) The filehandle you're reading from got itself closed sometime
 before now.  Check your control flow.
+
+=item readline() on unopened filehandle %s
+
+(W unopened) The filehandle you're reading from was never opened.  Check your
+control flow.
 
 =item read() on closed filehandle %s
 
